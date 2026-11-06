@@ -1,0 +1,17 @@
+[project]
+name = "linkabase"
+version = "0.4.6"
+description = "Connected notes, tasks, and project knowledge"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "streamlit[pdf]==1.66.1",
+  "fastapi==0.162.0",
+  "uvicorn==0.54.0",
+  "psutil>=7.0,<8",
+  "python-dotenv>=1.1,<2",
+  "filelock>=3.18,<4",
+]
+[dependency-groups]
+dev = ["httpx>=0.28,<1"]
+[tool.uv]
+package = false

@@ -1,0 +1,27 @@
+# Replace the domain and password hash before use. Caddy runs on the host;
+# application ports remain bound to 127.0.0.1 through Docker Compose.
+linkabase.example.com {
+    # Generate interactively: caddy hash-password
+    # Drawing API requests carry their own Bearer Authorization header.
+    # Do not require Basic Authorization on the same API requests.
+    @browser not path /api/drawings/*
+    basic_auth @browser {
+        operator REPLACE_WITH_CADDY_PASSWORD_HASH
+    }
+
+    header {
+        Referrer-Policy no-referrer
+        X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+    }
+    @private path /api/* /media/* /editor/*
+    header @private Cache-Control "no-store"
+
+    @drawing path /editor/* /api/drawings/* /studio-assets/*
+    handle @drawing {
+        reverse_proxy 127.0.0.1:8090
+    }
+    handle {
+        reverse_proxy 127.0.0.1:8501
+    }
+}

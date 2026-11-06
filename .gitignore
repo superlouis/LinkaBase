@@ -4,4 +4,12 @@ workspace/
 __pycache__/
 .env
 
-wiki_editor/node_modules/
+node_modules/
+
+# Keep deployment secrets and database snapshots out of source/images.
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-*
+*.pem
+*.key

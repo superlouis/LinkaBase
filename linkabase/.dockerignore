@@ -1,0 +1,20 @@
+workspace
+__pycache__
+.venv
+
+frontend/node_modules
+editor_dist
+
+.env
+.runtime
+.git
+
+src/wiki_editor/node_modules
+
+# Keep deployment secrets and database snapshots out of source/images.
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-*
+*.pem
+*.key

@@ -1,0 +1,7 @@
+.venv/
+.runtime/
+workspace/
+__pycache__/
+.env
+
+wiki_editor/node_modules/

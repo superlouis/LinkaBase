@@ -42,6 +42,7 @@ def delete_project(token,project):
             snapshot['tables'][table]=[dict(x) for x in c.execute('SELECT x.* FROM '+table+' x JOIN tasks t ON t.id=x.task WHERE t.project=?',(project,))]
         prefix=project+'/'
         snapshot['tables']['doc_versions']=[dict(x) for x in c.execute('SELECT * FROM doc_versions WHERE substr(path,1,?)=?',(len(prefix),prefix))]
+        snapshot['tables']['wiki_authorship']=[dict(x) for x in c.execute('SELECT * FROM wiki_authorship WHERE substr(path,1,?)=?',(len(prefix),prefix))]
         docdir=safe(ROOT/'docs',project)
         docrefs={x['path'] for x in snapshot['tables']['doc_versions']}
         docrefs.update(x['ref'] for x in snapshot['tables']['note_children'] if x['kind']=='doc' and x['ref'].startswith(prefix))
@@ -59,6 +60,7 @@ def delete_project(token,project):
         for table in ['task_targets','task_assignees']:c.execute('DELETE FROM '+table+' WHERE task IN (SELECT id FROM tasks WHERE project=?)',(project,))
         for table in ['memberships','note_children','notes','tasks','diagrams','note_migrations']:c.execute('DELETE FROM '+table+' WHERE project=?',(project,))
         c.execute('DELETE FROM doc_versions WHERE substr(path,1,?)=?',(len(prefix),prefix))
+        c.execute('DELETE FROM wiki_authorship WHERE substr(path,1,?)=?',(len(prefix),prefix))
         c.execute('DELETE FROM projects WHERE id=?',(project,))
         try:
             for src in dict.fromkeys(paths):

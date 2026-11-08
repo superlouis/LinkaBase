@@ -4,7 +4,7 @@ from store import db,rows
 LEVEL={'read':1,'write':2,'admin':3}
 def init_auth():
     with db() as c:
-        c.executescript('''CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY,name TEXT,email TEXT UNIQUE,password TEXT,site_admin INTEGER DEFAULT 0,active INTEGER DEFAULT 1,theme TEXT DEFAULT 'Paper');
+        c.executescript('''CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY,name TEXT,email TEXT UNIQUE,password TEXT,site_admin INTEGER DEFAULT 0,active INTEGER DEFAULT 1,theme TEXT DEFAULT 'Midnight');
 CREATE TABLE IF NOT EXISTS memberships(user TEXT,project TEXT,role TEXT,PRIMARY KEY(user,project));
 CREATE TABLE IF NOT EXISTS sessions(token TEXT PRIMARY KEY,user TEXT,expires REAL);
 CREATE TABLE IF NOT EXISTS login_attempts(email TEXT PRIMARY KEY,failures INTEGER,blocked_until REAL);''')
@@ -19,7 +19,7 @@ def create_user(name,email,password,bootstrap=False):
     with db() as c:
         c.execute('BEGIN IMMEDIATE')
         if bootstrap and c.execute('SELECT 1 FROM users').fetchone(): raise ValueError('Setup already completed. Sign in.')
-        c.execute('INSERT INTO users(id,name,email,password,site_admin,theme) VALUES (?,?,?,?,?,?)',(id,name,email,hashed,int(bootstrap),'Paper'))
+        c.execute('INSERT INTO users(id,name,email,password,site_admin,theme) VALUES (?,?,?,?,?,?)',(id,name,email,hashed,int(bootstrap),'Midnight'))
     return id
 def login(email,password):
     email=email.strip().lower();t=time.time()
@@ -68,3 +68,14 @@ def set_super_admin(token, target, enabled):
         if not selected or not selected['active']:raise ValueError('Choose an active account.')
         if not enabled and selected['site_admin'] and c.execute('SELECT COUNT(*) FROM users WHERE site_admin=1 AND active=1').fetchone()[0]<=1:raise ValueError('Keep at least one active super-admin.')
         c.execute('UPDATE users SET site_admin=? WHERE id=?',(int(enabled),target))
+
+
+def require_super_admin(token,connection=None):
+    """Check current privileges, including inside a committing transaction."""
+    if connection is None:
+        actor=user_for(token)
+    else:
+        actor=connection.execute('SELECT u.* FROM users u JOIN sessions s ON s.user=u.id WHERE s.token=? AND s.expires>? AND u.active=1',
+                                 (hashlib.sha256(token.encode()).hexdigest(),time.time())).fetchone()
+    if not actor or not actor['site_admin']:raise PermissionError('Super-admin access required.')
+    return actor

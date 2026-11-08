@@ -28,7 +28,15 @@
 .st-key-auth_form [data-testid="stForm"] [data-testid="stVerticalBlock"]{gap:16px}
 .st-key-auth_form [data-testid="stWidgetLabel"] p{font-size:12px!important;color:#4d5a70}
 .st-key-auth_form [data-baseweb="input"]{border-radius:7px;border-color:#dce3ed;min-height:43px}
-.st-key-auth_form input{font-size:13px}.st-key-auth_form input::placeholder{color:#a0aabb!important;-webkit-text-fill-color:#a0aabb!important}
+/* The login stays light even when Streamlit and browser autofill use a dark theme. */
+.st-key-auth_form{color-scheme:light}
+.st-key-auth_form [data-baseweb="input"],.st-key-auth_form [data-baseweb="input"]>div,.st-key-auth_form [data-baseweb="base-input"],.st-key-auth_form input{background:#fff!important;color:#20252d!important}
+.st-key-auth_form input{font-size:13px;caret-color:#20252d;-webkit-text-fill-color:#20252d!important}
+.st-key-auth_form input::placeholder{color:#657184!important;-webkit-text-fill-color:#657184!important}
+.st-key-auth_form input:autofill{box-shadow:0 0 0 1000px #fff inset!important;color:#20252d!important;-webkit-text-fill-color:#20252d!important}
+.st-key-auth_form input:-webkit-autofill{box-shadow:0 0 0 1000px #fff inset!important;-webkit-text-fill-color:#20252d!important;caret-color:#20252d}
+.st-key-auth_form [data-baseweb="input"] button{background:#f0f2f5!important;color:#4d5a70!important}
+.st-key-auth_form [data-testid="InputInstructions"]{color:#657184!important}
 .st-key-auth_form [data-testid="stFormSubmitButton"]{padding-top:5px}.st-key-auth_form [data-testid="stFormSubmitButton"] button{min-height:43px}
 .auth-reassurance{display:flex;align-items:center;gap:8px;color:#929caf;font-size:10px;margin-top:12px;line-height:1.6}.auth-reassurance span{font-size:15px;color:#9aabc4}
 .auth-footer{display:flex;justify-content:space-between;padding:18px 3px 0;color:#9ba5b5;font-size:10px}

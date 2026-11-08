@@ -165,6 +165,9 @@ def delete_content(token,project,id,whole_base=False):
                 history=ROOT/'history'/__import__('hashlib').sha256(ref.encode()).hexdigest()
                 if history.exists():paths.append(history)
                 c.execute('UPDATE tasks SET doc=? WHERE project=? AND doc=?',('',project,ref))
+                metadata=c.execute('SELECT * FROM wiki_authorship WHERE path=?',(ref,)).fetchone()
+                if metadata:child['authorship']=dict(metadata)
+                c.execute('DELETE FROM wiki_authorship WHERE path=?',(ref,))
             elif kind=='diagram':
                 source=c.execute('SELECT * FROM diagrams WHERE id=? AND project=?',(ref,project)).fetchone()
                 path=safe(ROOT/'diagrams',ref+'.excalidraw')

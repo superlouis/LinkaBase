@@ -26,3 +26,13 @@ button.text-link:hover{text-decoration:underline}.panel-head{min-height:58px}.pa
 @media(max-width:780px){.library-row{grid-template-columns:1fr 90px}.library-row>:nth-child(2){display:none}.topic-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.project-summary{display:block}.metrics{grid-template-columns:repeat(2,1fr)}.recent-row{grid-template-columns:1fr 90px}.surface-footer{font-size:9px;gap:15px}}
 
 .diagram-card button.preview{width:100%;border:0;border-bottom:1px solid var(--line);border-radius:0}
+
+.wiki-row{grid-template-columns:minmax(170px,2.5fr) minmax(100px,1.3fr) minmax(90px,1fr) minmax(90px,1fr) 100px!important;gap:18px!important}
+.wiki-row .type-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mobile-authors{display:none}
+@media(max-width:1000px){.wiki-row{gap:10px!important;grid-template-columns:minmax(140px,2fr) minmax(80px,1fr) 90px 90px 95px!important}}
+@media(max-width:780px){.wiki-row{grid-template-columns:minmax(0,1fr) 90px!important}.wiki-row .topic-col,.wiki-row .author-col,.wiki-row .editor-col{display:none}.mobile-authors{display:block;font-size:10px;color:var(--muted);margin-top:5px;white-space:normal}.wiki-row .name strong{font-size:12px}}
+
+#surface{color:var(--ink)}
+.metric strong,.panel-head h2,.project-summary h2,.quick-link strong,.recent-row strong{color:var(--ink)}
+.metric-top,.metric small,.quick-link small,.recent-row{color:var(--muted)}
+.recent-row.header{background:var(--paper);color:var(--muted)}

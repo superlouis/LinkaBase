@@ -15,7 +15,7 @@ from streamlit.testing.v1 import AppTest
 init(); init_auth(); init_notes()
 owner = create_user('Alex', 'alex@example.com', 'password-12345', bootstrap=True)
 token = login('alex@example.com', 'password-12345')
-assert user_for(token)['theme'] == 'Paper'
+assert user_for(token)['theme'] == 'Midnight'
 create_project(token, 'Workspace <example>', 'WORK')
 other = create_user('Alex', 'other@example.com', 'password-12345')
 execute('INSERT INTO memberships VALUES (?,?,?)', (other, 'WORK', 'read'))
@@ -63,4 +63,4 @@ assert next(b for b in reader.button if b.label == 'New task').disabled
 with patch('surface.render_surface',return_value={'kind':'task','id':'OTHER'}):reader.run()
 assert not reader.exception
 assert not [b for b in reader.button if b.label == 'Save task']
-print('PASS: assignment identity, due-date ordering, overview navigation, Paper default, reader permissions')
+print('PASS: assignment identity, due-date ordering, overview navigation, Midnight default, reader permissions')

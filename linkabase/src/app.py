@@ -13,10 +13,10 @@ st.set_page_config(page_title='Linkabase',page_icon=str(ICON),layout='wide')
 init();init_auth();init_notes()
 from auth_view import render_auth
 if not rows('SELECT id FROM users'):
- styling();render_auth(first_run=True);st.stop()
+ styling('Paper');render_auth(first_run=True);st.stop()
 token=st.session_state.get('token','');user=user_for(token)
 if not user:
- styling();render_auth();st.stop()
+ styling('Paper');render_auth();st.stop()
 styling(user['theme'])
 projects=[x for x in rows('SELECT * FROM projects ORDER BY id') if role_for(user,x['id'])]
 st.session_state.setdefault('page','Highlight')
@@ -55,7 +55,7 @@ with st.sidebar:
    selected_id=st.session_state.get('child-picker:'+st.session_state.selected_note,st.session_state.get('selected_child',''))
    active_content=rows('SELECT kind FROM note_children WHERE note=? AND project=? ORDER BY (id=?) DESC,kind,title LIMIT 1',(st.session_state.selected_note,p,selected_id))
    if active_content:active_kind=active_content[0]['kind']
-  eyebrow('Workspace');nav('Overview','Highlight',':material/space_dashboard:');nav('Tasks','Tasks',':material/task_alt:');nav('Topics','Topics',':material/layers:',active=st.session_state.page=='Topics' and not topic_context)
+  eyebrow('Project space');nav('Overview','Highlight',':material/space_dashboard:');nav('Tasks','Tasks',':material/task_alt:');nav('Topics','Topics',':material/layers:',active=st.session_state.page=='Topics' and not topic_context)
   require(token,p);sync_project(p)
   library_notes=list_notes(token,p);library_ids={n['id'] for n in library_notes}
   topic_key='library-topic:'+p
@@ -74,20 +74,26 @@ with st.sidebar:
  eyebrow('Manage')
  nav('My preferences','Settings',':material/settings:')
  if p and role_for(user,p)=='admin':nav('Project settings','Project settings',':material/folder_managed:')
+ if user['site_admin']:nav('Project transfers','Transfers',':material/import_export:')
+ if st.button('Quick guide',icon=':material/help_outline:',width='stretch',key='quick-guide'):
+  st.session_state.guide_requested=True
  if user['site_admin'] or (p and role_for(user,p)=='admin'):nav('Workspace administration' if user['site_admin'] else 'Project members','Administration',':material/group:')
  st.divider();st.caption(user['name']+' · '+('Super-admin' if user['site_admin'] else {'admin':'Project admin','write':'Writer','read':'Reader'}.get(role_for(user,p),'No project access')))
- if st.button('Sign out',icon=':material/logout:',width='stretch'):
-  logout(token);st.session_state.clear();st.rerun()
- if user['site_admin']:
-  with st.expander('New project',icon=':material/add:'):
-   with st.form('project'):
-    name=st.text_input('Project name');key=st.text_input('Project key',placeholder='APP');desc=st.text_input('Description')
-    if st.form_submit_button('Create project'):
-     try:create_project(token,name,key,desc);st.session_state.pending_project=key;st.rerun()
-     except (ValueError,PermissionError,sqlite3.IntegrityError) as e:st.error(str(e))
+ with st.container(key='sidebar_account_actions'):
+  if st.button('Sign out',icon=':material/logout:',width='stretch',key='sign_out'):
+   logout(token);st.session_state.clear();st.rerun()
+  if user['site_admin']:
+   with st.popover('New project',icon=':material/add:',width='stretch',key='new_project'):
+    with st.form('project'):
+     name=st.text_input('Project name');key=st.text_input('Project key',placeholder='APP');desc=st.text_input('Description')
+     if st.form_submit_button('Create project'):
+      try:create_project(token,name,key,desc);st.session_state.pending_project=key;st.rerun()
+      except (ValueError,PermissionError,sqlite3.IntegrityError) as e:st.error(str(e))
 footer()
+from onboarding import render_guide
+render_guide(user,p)
 page=st.session_state.page
-if page not in {'Highlight','Tasks','Topics','Wiki','Diagrams','Settings','Administration','Project settings'}:
+if page not in {'Highlight','Tasks','Topics','Wiki','Diagrams','Settings','Administration','Project settings','Transfers'}:
  st.session_state.page='Highlight';st.rerun()
 project_label=next((x['name'] for x in projects if x['id']==p),'Workspace')
 if p and page in ['Wiki','Diagrams']:
@@ -100,6 +106,10 @@ if page=='Settings':render_settings(token,user);st.caption('Linkabase v'+get_ver
 if page=='Administration':
  if not(user['site_admin'] or (p and role_for(user,p)=='admin')):st.error('Administrator access required.');st.stop()
  render_admin(token,user,p);st.stop()
+if page=='Transfers':
+ if not user['site_admin']:st.error('Super-admin access required.');st.stop()
+ from transfer_view import render_transfers
+ render_transfers(token);st.stop()
 if page=='Project settings' and p:render_project_settings(token,p);st.stop()
 if not p:
  if user['site_admin']:
@@ -218,7 +228,7 @@ def content_dialog(kind):
    try:
     if not title.strip():raise ValueError('Add a title.')
     if kind=='doc':
-     ref=f'{p}/{uuid.uuid4().hex[:10]}-{re.sub(r"[^a-zA-Z0-9_-]","-",title.strip())[:60]}.md';save_doc(ref,body or '# '+title+'\n',digest(''))
+     ref=f'{p}/{uuid.uuid4().hex[:10]}-{re.sub(r"[^a-zA-Z0-9_-]","-",title.strip())[:60]}.md';save_doc(ref,body or '# '+title+'\n',digest(''),actor=user['name'])
     elif kind=='diagram':ref=new_diagram(p,title)
     child=add_child(token,p,note,kind,ref,title);close_content();go('Topics',note=note,child=child);st.rerun()
    except ValueError as e:st.error(str(e))
@@ -277,7 +287,7 @@ elif page=='Tasks':
  component=Path(__file__).parent/'kanban'
  if view=='Board' and component.exists():
   from streamlit.components.v1 import declare_component
-  board=declare_component('linkabase_kanban',path=str(component));event=board(tasks=[dict(t,context=targetlabels.get(targets.get(t['id'],''),'')) for t in filtered],statuses=STATUSES,writable=writable,colors=THEMES.get(user['theme'],THEMES['Paper']),key='board:'+p,default=None)
+  board=declare_component('linkabase_kanban',path=str(component));event=board(tasks=[dict(t,context=targetlabels.get(targets.get(t['id'],''),'')) for t in filtered],statuses=STATUSES,writable=writable,colors=THEMES.get(user['theme'],THEMES['Midnight']),key='board:'+p,default=None)
   st.caption('Drag to move. Click to open. Use List for a keyboard-friendly view.')
   if event and event.get('nonce')!=st.session_state.get('board-event'):
    st.session_state['board-event']=event.get('nonce')

@@ -16,8 +16,8 @@ def _renderer():
     )
 
 
-def render_surface(markup, key, theme='Paper'):
-    result = _renderer()(data={'html': markup, 'colors': THEMES.get(theme, THEMES['Paper'])},
+def render_surface(markup, key, theme='Midnight'):
+    result = _renderer()(data={'html': markup, 'colors': THEMES.get(theme, THEMES['Midnight'])},
                          key=key, on_action_change=lambda: None)
     return result.action
 

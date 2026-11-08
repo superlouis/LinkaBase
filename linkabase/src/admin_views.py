@@ -12,7 +12,7 @@ def render_settings(token,user):
      st.caption('Super-admin' if user['site_admin'] else 'Project member')
     with st.container(border=True):
      st.subheader('Appearance');theme=st.selectbox('Theme',list(THEMES),index=list(THEMES).index(user['theme']) if user['theme'] in THEMES else 0)
-     st.caption('Paper matches the clean, light workspace design. Your theme preference applies across the app.')
+     st.caption('Midnight is the default dark workspace design. Your theme preference applies across the app.')
      if st.button('Apply theme',type='primary'):execute('UPDATE users SET theme=? WHERE id=?',(theme,user['id']));st.rerun()
     with st.expander('Change your password'):
      with st.form('password'):

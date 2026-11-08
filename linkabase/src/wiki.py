@@ -15,13 +15,13 @@ def render_wiki(token,project,child,path,writable,theme):
             st.session_state[key+':revision']=0
         original=st.session_state[key+':original']
         st.caption('Edit document · changes stay in this editor until you save.')
-        event=editor(content=original,revision=st.session_state[key+':revision'],colors=THEMES.get(theme,THEMES['Paper']),key=key+':editor',default=None)
+        event=editor(content=original,revision=st.session_state[key+':revision'],colors=THEMES.get(theme,THEMES['Midnight']),key=key+':editor',default=None)
         if event and event['nonce']!=st.session_state.get(key+':event'):
             st.session_state[key+':event']=event['nonce']
             if event['action']=='save':
-                require(token,project,'write')
+                actor=require(token,project,'write')
                 try:
-                    save_doc(child['ref'],event['content'],digest(original))
+                    save_doc(child['ref'],event['content'],digest(original),actor=actor['name'])
                     st.session_state[key+':saved']=True
                 except ValueError as e:st.error(str(e));return
             st.session_state[key+':editing']=False

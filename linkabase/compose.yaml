@@ -1,5 +1,6 @@
 services:
   workspace:
+    image: ${LINKABASE_IMAGE:-linkabase:local}
     build: .
     restart: unless-stopped
     ports:
@@ -11,6 +12,7 @@ services:
     volumes:
       - ${LINKABASE_DATA_DIR:-./workspace}:/data
   drawing-studio:
+    image: ${LINKABASE_IMAGE:-linkabase:local}
     build: .
     restart: unless-stopped
     command: uvicorn editor_api:app --app-dir service --host 0.0.0.0 --port 8090

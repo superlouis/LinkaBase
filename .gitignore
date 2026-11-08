@@ -4,6 +4,8 @@ workspace/
 __pycache__/
 .env
 
+site/
+
 node_modules/
 
 # Keep deployment secrets and database snapshots out of source/images.
@@ -13,3 +15,6 @@ node_modules/
 *.sqlite-*
 *.pem
 *.key
+
+# Project transfer archives are private data, not application source.
+*.lbproj

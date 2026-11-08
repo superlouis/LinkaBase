@@ -52,3 +52,10 @@ Login credentials, drawing content, and drawing bearer tokens require HTTPS outs
 A personal instance restricted to you is a much narrower exposure than a public multi-tenant service. Do not treat this review as approval to publish without the deployment controls above.
 
 References: [Streamlit configuration](https://docs.streamlit.io/develop/api-reference/configuration/config.toml), [FastAPI HTTPS](https://fastapi.tiangolo.com/deployment/https/), [Caddy authentication](https://caddyserver.com/docs/caddyfile/directives/basic_auth), [Caddy reverse proxy](https://caddyserver.com/docs/caddyfile/directives/reverse_proxy).
+
+
+## Encrypted project transfers (November 7 update)
+
+Project import/export now has live super-admin checks at entry and inside the committing transaction. The `.lbproj` format encrypts a compressed project payload with AES-256-GCM and a scrypt-derived key. Import tests cover wrong passwords, tampering, archive path/size limits, cross-record validation, privilege changes during import, new-ID mapping, and rollback of staged files/database changes. No accounts, password hashes, sessions, or memberships are transferred. This is not an independent cryptographic audit.
+
+Prepared native download links contain encrypted archive bytes, not plaintext project contents or passwords. The earlier native-media limitation still applies to ordinary previews and document/drawing downloads. Keep the outer access controls and HTTPS protections in this review.

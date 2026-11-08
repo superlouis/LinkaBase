@@ -18,8 +18,8 @@ THEMES.update({
 })
 
 
-def styling(theme='Paper'):
- c=THEMES.get(theme,THEMES['Paper'])
+def styling(theme='Midnight'):
+ c=THEMES.get(theme,THEMES['Midnight'])
  sidebar=c['card'] if theme in ('Paper','Sand','Slate','Rose') else c['panel']
  st.html(f"""<style>
  :root{{--lb-text:{c['text']};--lb-muted:{c['muted']};--lb-line:{c['line']};--lb-card:{c['card']};--lb-accent:{c['accent']}}}
@@ -66,6 +66,24 @@ def styling(theme='Paper'):
  [data-testid="stSidebar"] div[class*="st-key-nav_"] button:hover{{background:{c['panel']}!important}}
  [data-testid="stSidebar"] div[class*="st-key-nav_"] button[kind="primary"]{{background:{c['panel']}!important;border-color:{c['line']}!important}}
  [data-testid="stSidebar"] div[class*="st-key-nav_"] button[kind="primary"] *{{color:{c['accent']}!important;-webkit-text-fill-color:{c['accent']}!important}}
+ [data-testid="stSidebar"] [data-testid="stWidgetLabel"]:has(+div) p{{font-weight:600}}
+ [data-testid="stSidebar"] label:has(+div){{font-size:.9rem}}
+ [data-testid="stSidebar"] [data-testid="stSelectbox"]:first-of-type [data-testid="stWidgetLabel"] p{{font-size:15px!important;font-weight:700!important;color:{c['text']}!important}}
+ [data-testid="stSidebar"] .st-key-current-project input{{font-size:14px!important;font-weight:400!important}}
+ [data-testid="stSidebar"] .st-key-new_project button{{min-height:36px!important;justify-content:center!important;padding:8px 12px!important}}
+ [data-testid="stSidebar"] .st-key-new_project button p{{font-size:.82rem!important}}
+ [data-testid="stSidebar"] .st-key-sign_out button,[data-testid="stSidebar"] .st-key-new_project button{{min-height:38px!important;padding:8px 12px!important;justify-content:flex-start!important}}
+ [data-testid="stSidebar"] .st-key-sign_out button>div,[data-testid="stSidebar"] .st-key-new_project button>div{{width:100%;justify-content:flex-start!important}}
+ [data-testid="stSidebar"] .st-key-sidebar_account_actions button{{width:100%;height:38px;min-height:38px!important;padding:8px 12px!important;justify-content:flex-start!important;text-align:left}}
+ [data-testid="stSidebar"] .st-key-sidebar_account_actions button>div:first-child{{display:flex!important;width:100%!important;justify-content:flex-start!important;gap:8px!important}}
+ [data-testid="stSidebar"] .st-key-sidebar_account_actions [data-testid="stPopoverButton"]>div>div:first-child{{display:flex;flex:1;justify-content:flex-start!important}}
+ [data-testid="stSidebar"] .st-key-sidebar_account_actions button [data-has-shortcut]{{justify-content:flex-start!important;margin-right:auto!important}}
+ .driver-popover{{background:{c['card']}!important;color:{c['text']}!important;border:1px solid {c['line']};border-radius:10px}}
+ .driver-popover-title{{color:{c['text']}!important;font-family:inherit!important}}.driver-popover-description,.driver-popover-progress-text{{color:{c['muted']}!important}}
+ .driver-popover-close-btn{{color:{c['muted']}!important}}.driver-popover-next-btn{{background:{c['accent']}!important;color:{c['onaccent']}!important;border:1px solid {c['accent']}!important;text-shadow:none!important}}
+ .driver-popover-prev-btn{{background:{c['panel']}!important;color:{c['text']}!important;border:1px solid {c['line']}!important;text-shadow:none!important}}
+ .driver-popover-arrow-side-left{{border-left-color:{c['card']}!important}}.driver-popover-arrow-side-right{{border-right-color:{c['card']}!important}}
+ .driver-popover-arrow-side-top{{border-top-color:{c['card']}!important}}.driver-popover-arrow-side-bottom{{border-bottom-color:{c['card']}!important}}
  .st-key-library_tree{{border-left:1px solid {c['line']};margin-left:8px;padding-left:8px}}
  .st-key-library_tree button{{min-height:34px!important}}
  .st-key-topic_content{{background:{c['card']};padding:14px!important;border-color:{c['line']}!important}}

@@ -1,6 +1,6 @@
 [project]
 name = "linkabase"
-version = "0.0.2"
+version = "0.0.3"
 description = "Connected notes, tasks, and project knowledge"
 requires-python = ">=3.11,<3.14"
 dependencies = [
@@ -12,6 +12,7 @@ dependencies = [
   "certifi==2026.10.23",
   "charset-normalizer==3.5.2",
   "click==8.5.0",
+  "cryptography>=50.0.2",
   "fastapi==0.162.0",
   "filelock==3.32.7",
   "h11==0.16.0",
@@ -43,6 +44,7 @@ dependencies = [
   "six==1.17.0",
   "starlette==1.10.0",
   "streamlit==1.66.1",
+  "streamlit-tour>=1.1.0",
   "typing-extensions==4.16.0",
   "typing-inspection==0.4.4",
   "tzdata==2026.6",
